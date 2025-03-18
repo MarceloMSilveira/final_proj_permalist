@@ -69,13 +69,13 @@ app.post("/delete", async(req, res) => {
     // Destructure the values from the request body
     const { deleteItemId: id} = req.body;
 
-    // SQL query to update the item title based on the provided ID
+    // SQL query to delete the item title based on the provided ID
     const query = "DELETE FROM items WHERE id=$1";
 
     // Execute the query with the provided parameters
     await client.query(query, [id]);
 
-    // Redirect to the home page after a successful update
+    // Redirect to the home page after a successful delete
     res.redirect("/");
   } catch (error) {
     // Log the error for debugging purposes
