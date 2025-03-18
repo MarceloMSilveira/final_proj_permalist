@@ -35,15 +35,56 @@ app.get("/", async (req, res) => {
   });
 });
 
-app.post("/add", (req, res) => {
-  const item = req.body.newItem;
-  items.push({ title: item });
+app.post("/add", async(req, res) => {
+  const title = req.body.newItem;
+  const query = "INSERT INTO items (title) VALUES ($1);"
+  await client.query(query,[title]);
   res.redirect("/");
 });
 
-app.post("/edit", (req, res) => {});
+app.post("/edit", async (req, res) => {
+  try {
+    // Destructure the values from the request body
+    const { updatedItemId: id, updatedItemTitle: title } = req.body;
 
-app.post("/delete", (req, res) => {});
+    // SQL query to update the item title based on the provided ID
+    const query = "UPDATE items SET title=$1 WHERE id=$2";
+
+    // Execute the query with the provided parameters
+    await client.query(query, [title, id]);
+
+    // Redirect to the home page after a successful update
+    res.redirect("/");
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error("Error updating item:", error);
+
+    // Send a 500 Internal Server Error response
+    res.status(500).send("Error updating item.");
+  }
+});
+
+app.post("/delete", async(req, res) => {
+  try {
+    // Destructure the values from the request body
+    const { deleteItemId: id} = req.body;
+
+    // SQL query to update the item title based on the provided ID
+    const query = "DELETE FROM items WHERE id=$1";
+
+    // Execute the query with the provided parameters
+    await client.query(query, [id]);
+
+    // Redirect to the home page after a successful update
+    res.redirect("/");
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error("Error deleting item:", error);
+
+    // Send a 500 Internal Server Error response
+    res.status(500).send("Error deleting item.");
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
