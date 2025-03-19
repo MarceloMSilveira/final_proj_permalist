@@ -27,7 +27,7 @@ const client = new Client({
 await client.connect();
 
 app.get("/", async (req, res) => {
-  const result = await client.query("SELECT * FROM items;");
+  const result = await client.query("SELECT * FROM items ORDER BY id ASC;");
   const items = result.rows;
   res.render("index.ejs", {
     listTitle: "Today",
